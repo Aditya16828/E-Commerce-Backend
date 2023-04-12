@@ -42,7 +42,7 @@ userSchema.pre('save', function (next) {
     const encryptedPassword = bcrypt.hashSync(user.password, salt);
     user.password = encryptedPassword;
     next();
-})
+});
 
 const User = mongoose.model('User', userSchema);
 

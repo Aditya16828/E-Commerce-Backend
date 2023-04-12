@@ -25,6 +25,8 @@ const signup = async (req, res) => {
 const signin = async (req, res) => {
     try {
         const response = await userService.getUser(req.body);
+        console.log(response);
+
         return res.status(200).json({
             data: response,
             message: "Successfully signed in",
@@ -44,7 +46,8 @@ const signin = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const response = await userService.deleteUser(req.params.id);
+        const token = req.headers["access-token"];
+        const response = await userService.deleteUser(req.params.id, token);
         return res.status(200).json({
             data: response,
             message: "Successfully deleted User",
@@ -64,7 +67,8 @@ const deleteUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const response = await userService.modifyUser(req.params.id, req.data);
+        const token = req.headers["access-token"];
+        const response = await userService.modifyUser(req.params.id, req.body, token);
         return res.status(200).json({
             data: response,
             message: "Successfully updated User",
@@ -82,9 +86,31 @@ const updateUser = async (req, res) => {
     }
 }
 
+const isAuthenticated = async (req, res) => {
+    try {
+        const token = req.headers["access-token"];
+        const response = await userService.authenticateUser(token);
+        return res.status(200).json({
+            data: response,
+            success: true,
+            message: "User Authenticated",
+            err: {},
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            data: {},
+            message: "Cannot authenticate User",
+            err: error,
+            success: false
+        });
+    }
+};
+
 module.exports = {
     signup,
     signin,
     deleteUser,
-    updateUser
+    updateUser,
+    isAuthenticated
 }

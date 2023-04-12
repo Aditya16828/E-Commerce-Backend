@@ -20,12 +20,14 @@ const {
     signin,
     signup,
     deleteUser,
-    updateUser
+    updateUser,
+    isAuthenticated
 } = require('../../controller/user-controller');
 
 router.post('/user/signup', signup);
 router.post('/user/signin', signin);
 router.delete('/user/delete/:id', deleteUser);
 router.patch('/user/update/:id', updateUser);
+router.get('/user/isAuthenticated', isAuthenticated);
 
 module.exports = router;
