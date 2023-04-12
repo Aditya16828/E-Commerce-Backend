@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const {SALT_ROUNDS} = require('../config/serverConfig');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -33,6 +35,14 @@ const userSchema = new mongoose.Schema({
     }],
     // feedbacks: [{type: mongoose.Schema.Types.ObjectId,ref: 'Feedback'}]
 }, {timestamps: true});
+
+userSchema.pre('save', function (next) {
+    let user = this;
+    const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
+    const encryptedPassword = bcrypt.hashSync(user.password, salt);
+    user.password = encryptedPassword;
+    next();
+})
 
 const User = mongoose.model('User', userSchema);
 
