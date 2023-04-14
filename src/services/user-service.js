@@ -133,7 +133,6 @@ class UserService {
                 throw error;
             }
 
-            console.log("===============", data);
 
             const response = await this.userRepository.update(userId, data);
             return response;
@@ -147,7 +146,7 @@ class UserService {
         try {
             console.log(token);
             const response = this.verifyToken(token);
-            console.log("===========\n", response);
+
             const user = await this.userRepository.read(response.id);
             if(!user){
                 throw new UserNotFoundError();
