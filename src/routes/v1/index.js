@@ -50,4 +50,14 @@ router.patch('/deliveryAgent/:id', updateDA);
 
 /*************************************************************************** */
 
+const {
+    getOrderDetails,
+    placeOrder,
+    cancelOrder,
+} = require('../../controller/order-controller');
+
+router.get('/order/:id', getOrderDetails);
+router.post('/order/place', placeOrder);
+router.get('/order/cancel/:id', cancelOrder);
+
 module.exports = router;
