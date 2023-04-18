@@ -54,10 +54,14 @@ const {
     getOrderDetails,
     placeOrder,
     cancelOrder,
+    addDA,
+    onDelivery
 } = require('../../controller/order-controller');
 
 router.get('/order/:id', getOrderDetails);
 router.post('/order/place', placeOrder);
 router.get('/order/cancel/:id', cancelOrder);
+router.post('/order/addDA', addDA);
+router.post('/order/onDelivery', onDelivery);
 
 module.exports = router;
