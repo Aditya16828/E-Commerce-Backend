@@ -24,6 +24,9 @@ const orderSchema = mongoose.Schema({
     status: {
         type: String,
         enum: ['Placed', 'Pending', 'Cancelled', 'Delivered']
+    },
+    transactionid:{
+        type: String
     }
 }, {timestamps: true});
 

@@ -1,17 +1,23 @@
 const {OrderRepository} = require('../repository/index');
 const UserService = require('./user-service');
+const DAService = require('./DA-service');
+const ProductService = require('./product-service');
+const {KEY_ID, KEY_SECRET} = require('../config/serverConfig');
+
 
 class OrderService {
     constructor(){
         this.orderRepository = new OrderRepository();
         this.userService = new UserService();
+        this.daService = new DAService();
+        this.productService = new ProductService();
     }
 
     async getOrderDetails(orderId, token){
         try {
             const user = await this.userService.authenticateUser(token);
 
-            const order = await this.orderRepository.read(productId);
+            const order = await this.orderRepository.read(orderId);
             return order;
         } catch (error) {
             console.log(error);
@@ -32,12 +38,25 @@ class OrderService {
                 payload['deliveryType'] = data['deliveryType'];
             }
 
+            const product = await this.productService.getProduct(data.productId);
+
             // payment setup
-            const payment = true;
+            const instance = new Razorpay({
+                key_id: KEY_ID,
+                key_secret: KEY_SECRET
+            });
+    
+            const paymentOrder = await instance.orders.create({
+                amount: amount,
+                currency: "INR",
+                receipt: "receipt#1"
+            });
+
+            // redirection to a page -> completion of payment -> capture payment details ("status" == "captured")
 
             if(payment){
-                // register a payment id in order DB, and also in payments DB (not sure yet about payment DB as it can be replaced by transaction id)
                 payload['status'] = 'Placed';
+                // also update transactionid
             } else {
                 payload['status'] = 'Pending';
             }
@@ -63,7 +82,7 @@ class OrderService {
                 'status': 'Cancelled'
             };
 
-            const order = this.orderRepository.update(orderId, payload);
+            const order = await this.orderRepository.update(orderId, payload);
             return order;
         } catch (error) {
             console.log(error);
@@ -71,23 +90,35 @@ class OrderService {
         }
     }
 
-    async removeOrder(orderId){
-        try {
-            
-        } catch (error) {
-            
-        }
-    }
-
     async onDelivery(orderId){
         try {
-            
+            const payload = {
+                'status': 'Delivered'
+            };
+
+            const order = await this.orderRepository.update(orderId, payload);
+            return order;
         } catch (error) {
-            
+            console.log(error);
+            throw error;
         }
     }
 
-    async addDA(){}
+    async addDA(orderId, daId){
+        try {           
+            const payload = {
+                'daId': daId
+            };
+
+            const da = await this.daService.addDelivery(daId, orderId);
+
+            const order = await this.orderRepository.update(orderId, payload);
+            return {order, da};
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 }
 
 module.exports = OrderService;

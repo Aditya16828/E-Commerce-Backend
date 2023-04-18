@@ -54,6 +54,16 @@ class DAService {
             throw error;
         }
     }
+
+    async addDelivery(daid, orderid){
+        try {
+            const response = await this.daRepository.addDelivery(daid, orderid);
+            return response;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 }
 
 module.exports = DAService;

@@ -23,7 +23,10 @@ const daSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // orderDeliveries: [{}]
+    orderDeliveries: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order'
+    }]
 }, {timestamps: true});
 
 const DeliveryAgent = mongoose.model('DeliveryAgent', daSchema);

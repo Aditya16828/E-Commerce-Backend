@@ -65,8 +65,48 @@ const cancelOrder = async (req, res) => {
     }
 };
 
+const addDA = async (req, res) => {
+    try {
+        const response = await orderService.addDA(req.body.orderId, req.body.daId);
+        return res.status(200).json({
+            data: response,
+            message: "Successfully added DA",
+            err: {},
+            success: true
+        });
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            err: error,
+            message: "Problem occurred in adding DA",
+            success: false
+        });
+    }
+}
+
+const onDelivery = async (req, res) => {
+    try {
+        const response = await orderService.onDelivery(req.body.id);
+        return res.status(200).json({
+            data: response,
+            message: "Successfully updated delivered order",
+            err: {},
+            success: true
+        });
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            err: error,
+            message: "Problem occurred in updating order",
+            success: false
+        });
+    }
+}
+
 module.exports = {
     getOrderDetails,
     placeOrder,
-    cancelOrder
+    cancelOrder,
+    addDA,
+    onDelivery
 }
